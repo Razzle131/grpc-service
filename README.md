@@ -40,10 +40,10 @@ go run entrypoints/server/main.go
 go run entrypoints/server/main.go getDns
 ```
 Other methods:
-* addDns <ip>
-* remDns <ip>
+* addDns "ip" "server sudo password"
+* remDns "ip" "server sudo password"
 * getHostname
-* setHostname <newHostname>
+* setHostname "new hostname"
 ______
 #### Using Makefile
 * Ensure that Go is installed on your machine and it`s version is equal or higther than 1.22.2
@@ -58,7 +58,7 @@ git clone https://github.com/Razzle131/grpc-service.git
 ```
 make run-server
 ```
-* Now you can use commands to start client `make run-client action=<action> arg=<arg>`
+* Now you can use commands to start client `make run-client action=<action> arg=<arg> sudo=<sudoPassword>`
   * actions:
     * getDns
     * addDns
@@ -68,3 +68,5 @@ make run-server
   * arg:
     * for host set request: new host name
     * for dns set request: ip address of dns server (example: `8.8.8.8`)
+ * sudo:
+    * for changing hostname and dns servers  
