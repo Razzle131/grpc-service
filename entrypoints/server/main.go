@@ -12,14 +12,10 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 
+	"github.com/Razzle131/grpc-service/internal/consts"
 	"github.com/Razzle131/grpc-service/internal/dns"
 	desc "github.com/Razzle131/grpc-service/internal/generated"
 	"github.com/Razzle131/grpc-service/internal/host"
-)
-
-const (
-	grpcAddress string = "localhost:50051"
-	httpAddress string = "localhost:8080"
 )
 
 func main() {
@@ -56,12 +52,12 @@ func startGrpcServer() error {
 
 	desc.RegisterCustomizerServer(grpcServer, &server{})
 
-	list, err := net.Listen("tcp", grpcAddress)
+	list, err := net.Listen("tcp", consts.GrpcAddress)
 	if err != nil {
 		return err
 	}
 
-	log.Printf("gRPC server listening at %v\n", grpcAddress)
+	log.Printf("gRPC server listening at %v\n", consts.GrpcAddress)
 
 	return grpcServer.Serve(list)
 }
@@ -73,14 +69,14 @@ func startHttpServer(ctx context.Context) error {
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
 
-	err := desc.RegisterCustomizerHandlerFromEndpoint(ctx, mux, grpcAddress, opts)
+	err := desc.RegisterCustomizerHandlerFromEndpoint(ctx, mux, consts.GrpcAddress, opts)
 	if err != nil {
 		return err
 	}
 
-	log.Printf("http server listening at %v\n", httpAddress)
+	log.Printf("http server listening at %v\n", consts.HttpAddress)
 
-	return http.ListenAndServe(httpAddress, mux)
+	return http.ListenAndServe(consts.HttpAddress, mux)
 }
 
 type server struct {

@@ -56,7 +56,6 @@ service Customizer {
     rpc RemoveDNS(SetDnsRequest) returns (SetDnsResponse) {
         option (google.api.http) = {
             delete: "/dns/rem"
-            //body: "*"
         };
     }
 

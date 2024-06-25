@@ -1,5 +1,5 @@
 bin
 vendor.protogen
 tools.go
-foo.conf
-Makefile
+*.conf
+*.txt

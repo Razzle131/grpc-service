@@ -6,15 +6,13 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/Razzle131/grpc-service/internal/consts"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-const ipRegExp = `^(\d+\.){3}\d+$`
-
 func GetDNS() ([]string, error) {
-	//cmd := "cat /etc/resolv.conf | grep nameserver"
-	cmd := "cat /home/razzle/go_projects/tz_yadro/foo.conf | grep nameserver"
+	cmd := "cat /etc/resolv.conf | grep nameserver"
 
 	output, err := exec.Command("bash", "-c", cmd).Output()
 	if err != nil {
@@ -36,7 +34,7 @@ func GetDNS() ([]string, error) {
 }
 
 func isValidIp(ip string) (bool, error) {
-	return regexp.MatchString(ipRegExp, ip)
+	return regexp.MatchString(consts.IpRegExp, ip)
 }
 
 func AddDns(ip string) error {
@@ -44,7 +42,7 @@ func AddDns(ip string) error {
 		return status.Errorf(codes.Aborted, "given ip is not valid")
 	}
 
-	cmd := fmt.Sprintf("echo -n '\nnameserver %s' >> /home/razzle/go_projects/tz_yadro/foo.conf", ip)
+	cmd := fmt.Sprintf("echo -n '\nnameserver %s' >> /etc/resolv.conf", ip)
 
 	err := exec.Command("bash", "-c", cmd).Run()
 	if err != nil {
@@ -59,7 +57,7 @@ func RemoveDns(ip string) error {
 		return status.Errorf(codes.Aborted, "given ip is not valid")
 	}
 
-	cmd := fmt.Sprintf(`awk -v input="%s" '!index($0, input)' foo.conf > $$.temp && cat $$.temp > foo.conf && rm $$.temp`, ip)
+	cmd := fmt.Sprintf(`awk -v input="%s" '!index($0, input)' /etc/resolv.conf > $$.temp && cat $$.temp > /etc/resolv.conf && rm $$.temp`, ip)
 
 	err := exec.Command("bash", "-c", cmd).Run()
 	if err != nil {
