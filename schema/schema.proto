@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+
+option go_package = "github.com/Razzle131/tz_yadro/service";
+
+message GetHostRequest {
+
+}
+
+message SetHostRequest {
+    string newHostname = 1;
+}
+
+message HostResponse {
+    string curHostname = 1;
+}
+
+message GetDnsRequest {
+
+}
+
+message GetDnsResponse {
+    repeated string dnsIps = 1;
+}
+
+message SetDnsRequest {
+    string dnsIp = 1;
+}
+
+message SetDnsResponse {
+
+}
+
+service Customizer {
+    rpc GetHostName(GetHostRequest) returns (HostResponse) {
+        option (google.api.http) = {
+            get: "/host"
+        };
+    }
+
+    rpc SetHostName(SetHostRequest) returns (HostResponse) {
+        option (google.api.http) = {
+            post: "/host"
+            body: "*"
+        };
+    }
+
+    rpc AddDNS(SetDnsRequest) returns (SetDnsResponse) {
+        option (google.api.http) = {
+            post: "/dns/add"
+            body: "*"
+        };
+    }
+
+    rpc RemoveDNS(SetDnsRequest) returns (SetDnsResponse) {
+        option (google.api.http) = {
+            delete: "/dns/rem"
+            //body: "*"
+        };
+    }
+
+    rpc GetDNS(GetDnsRequest) returns (GetDnsResponse) {
+        option (google.api.http) = {
+            get: "/dns"
+        };
+    }
+}
