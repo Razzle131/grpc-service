@@ -42,7 +42,7 @@ func AddDns(ip string) error {
 		return status.Errorf(codes.Aborted, "given ip is not valid")
 	}
 
-	cmd := fmt.Sprintf("echo -n '\nnameserver %s' >> /etc/resolv.conf", ip)
+	cmd := fmt.Sprintf("sudo echo -n '\nnameserver %s' >> /etc/resolv.conf", ip)
 
 	err := exec.Command("bash", "-c", cmd).Run()
 	if err != nil {
@@ -57,7 +57,7 @@ func RemoveDns(ip string) error {
 		return status.Errorf(codes.Aborted, "given ip is not valid")
 	}
 
-	cmd := fmt.Sprintf(`awk -v input="%s" '!index($0, input)' /etc/resolv.conf > $$.temp && cat $$.temp > /etc/resolv.conf && rm $$.temp`, ip)
+	cmd := fmt.Sprintf(`sudo awk -v input="%s" '!index($0, input)' /etc/resolv.conf > $$.temp && cat $$.temp > /etc/resolv.conf && rm $$.temp`, ip)
 
 	err := exec.Command("bash", "-c", cmd).Run()
 	if err != nil {
