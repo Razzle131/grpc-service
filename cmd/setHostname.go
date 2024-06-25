@@ -19,7 +19,7 @@ import (
 var setHostnameCmd = &cobra.Command{
 	Use:   "setHostname",
 	Short: "sets servers hostname with given arg",
-	Args:  cobra.ExactArgs(1),
+	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		conn, err := grpc.NewClient(consts.GrpcAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
@@ -32,7 +32,7 @@ var setHostnameCmd = &cobra.Command{
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
 
-		res, err := c.SetHostName(ctx, &desc.SetHostRequest{NewHostname: args[0]})
+		res, err := c.SetHostName(ctx, &desc.SetHostRequest{NewHostname: args[0], SudoPassword: args[1]})
 		if err != nil {
 			log.Fatalf("failed to get note by id: %v", err)
 		}

@@ -20,7 +20,7 @@ var addDnsCmd = &cobra.Command{
 	Use:   "addDns",
 	Short: "adds given ip to dns list",
 	Long:  "adds given ip address to /etc/resolv.conf file (resets after reboot)",
-	Args:  cobra.ExactArgs(1),
+	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		conn, err := grpc.NewClient(consts.GrpcAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
@@ -33,7 +33,7 @@ var addDnsCmd = &cobra.Command{
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
 
-		_, err = c.AddDNS(ctx, &desc.SetDnsRequest{DnsIp: args[0]})
+		_, err = c.AddDNS(ctx, &desc.SetDnsRequest{DnsIp: args[0], SudoPassword: args[1]})
 		if err != nil {
 			log.Fatalf("failed to get note by id: %v", err)
 		}

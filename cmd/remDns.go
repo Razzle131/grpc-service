@@ -20,7 +20,7 @@ var remDnsCmd = &cobra.Command{
 	Use:   "remDns",
 	Short: "removes given dns ip address",
 	Long:  "removes given dns ip address from /etc/resolv.conf file",
-	Args:  cobra.ExactArgs(1),
+	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		conn, err := grpc.NewClient(consts.GrpcAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
@@ -33,7 +33,7 @@ var remDnsCmd = &cobra.Command{
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
 
-		_, err = c.RemoveDNS(ctx, &desc.SetDnsRequest{DnsIp: args[0]})
+		_, err = c.RemoveDNS(ctx, &desc.SetDnsRequest{DnsIp: args[0], SudoPassword: args[1]})
 		if err != nil {
 			log.Fatalf("failed to get note by id: %v", err)
 		}

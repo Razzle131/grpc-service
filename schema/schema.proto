@@ -10,6 +10,7 @@ message GetHostRequest {
 
 message SetHostRequest {
     string newHostname = 1;
+    string sudoPassword = 2;
 }
 
 message HostResponse {
@@ -26,6 +27,7 @@ message GetDnsResponse {
 
 message SetDnsRequest {
     string dnsIp = 1;
+    string sudoPassword = 2;
 }
 
 message SetDnsResponse {

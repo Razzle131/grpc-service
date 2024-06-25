@@ -5,7 +5,6 @@ run-server:
 
 action:=
 arg:=
+sudo:=
 run-client:
-	go run entrypoints/client/main.go $(action) $(arg)
-
-
+	go run entrypoints/client/main.go $(action) $(arg) $(sudo)

@@ -12,9 +12,9 @@ import (
 )
 
 func GetDNS() ([]string, error) {
-	cmd := "cat /etc/resolv.conf | grep nameserver"
+	command := "cat /etc/resolv.conf | grep nameserver"
 
-	output, err := exec.Command("bash", "-c", cmd).Output()
+	output, err := exec.Command("bash", "-c", command).Output()
 	if err != nil {
 		return nil, status.Errorf(codes.Unknown, fmt.Sprintf("cmd error: %s", err))
 	}
@@ -37,31 +37,40 @@ func isValidIp(ip string) (bool, error) {
 	return regexp.MatchString(consts.IpRegExp, ip)
 }
 
-func AddDns(ip string) error {
-	if match, err := isValidIp(ip); !match || err != nil {
-		return status.Errorf(codes.Aborted, "given ip is not valid")
-	}
+func ExecCommandByRoot(command, sudoPassword string) error {
+	cmd := exec.Command("sudo", "-S", "su", "root", "bash", "-c", command)
+	cmd.Stdin = strings.NewReader(sudoPassword)
 
-	cmd := fmt.Sprintf("sudo echo -n '\nnameserver %s' >> /etc/resolv.conf", ip)
-
-	err := exec.Command("bash", "-c", cmd).Run()
-	if err != nil {
-		return status.Errorf(codes.Unknown, fmt.Sprintf("cmd error: %s", err))
+	if err := cmd.Run(); err != nil {
+		return status.Errorf(codes.PermissionDenied, "given sudo password is incoreect")
 	}
 
 	return nil
 }
 
-func RemoveDns(ip string) error {
+func AddDns(ip, sudoPassword string) error {
 	if match, err := isValidIp(ip); !match || err != nil {
 		return status.Errorf(codes.Aborted, "given ip is not valid")
 	}
 
-	cmd := fmt.Sprintf(`sudo awk -v input="%s" '!index($0, input)' /etc/resolv.conf > $$.temp && cat $$.temp > /etc/resolv.conf && rm $$.temp`, ip)
+	command := fmt.Sprintf("sudo echo -n '\nnameserver %s' >> /etc/resolv.conf", ip)
 
-	err := exec.Command("bash", "-c", cmd).Run()
-	if err != nil {
-		return status.Errorf(codes.Unknown, fmt.Sprintf("cmd error: %s", err))
+	if err := ExecCommandByRoot(command, sudoPassword); err != nil {
+		return status.Errorf(codes.PermissionDenied, "cannot access file for dns configuration")
+	}
+
+	return nil
+}
+
+func RemoveDns(ip, sudoPassword string) error {
+	if match, err := isValidIp(ip); !match || err != nil {
+		return status.Errorf(codes.Aborted, "given ip is not valid")
+	}
+
+	command := fmt.Sprintf(`awk -v input="%s" '!index($0, input)' /etc/resolv.conf > $$.temp && cat $$.temp > /etc/resolv.conf && rm $$.temp`, ip)
+
+	if err := ExecCommandByRoot(command, sudoPassword); err != nil {
+		return status.Errorf(codes.PermissionDenied, "cannot access file for dns configuration")
 	}
 
 	return nil

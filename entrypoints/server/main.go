@@ -95,7 +95,7 @@ func (s *server) GetHostName(ctx context.Context, req *desc.GetHostRequest) (*de
 }
 
 func (s *server) SetHostName(ctx context.Context, req *desc.SetHostRequest) (*desc.HostResponse, error) {
-	hostname, err := host.SetHost(req.GetNewHostname())
+	hostname, err := host.SetHost(req.NewHostname, req.SudoPassword)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func (s *server) GetDNS(context.Context, *desc.GetDnsRequest) (*desc.GetDnsRespo
 }
 
 func (s *server) AddDNS(ctx context.Context, req *desc.SetDnsRequest) (*desc.SetDnsResponse, error) {
-	if err := dns.AddDns(req.DnsIp); err != nil {
+	if err := dns.AddDns(req.DnsIp, req.SudoPassword); err != nil {
 		return nil, err
 	}
 
@@ -125,7 +125,7 @@ func (s *server) AddDNS(ctx context.Context, req *desc.SetDnsRequest) (*desc.Set
 }
 
 func (s *server) RemoveDNS(ctx context.Context, req *desc.SetDnsRequest) (*desc.SetDnsResponse, error) {
-	if err := dns.RemoveDns(req.DnsIp); err != nil {
+	if err := dns.RemoveDns(req.DnsIp, req.SudoPassword); err != nil {
 		return nil, err
 	}
 
