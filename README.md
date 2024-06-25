@@ -43,7 +43,7 @@ Other methods:
 * addDns "ip" "server sudo password"
 * remDns "ip" "server sudo password"
 * getHostname
-* setHostname "new hostname"
+* setHostname "new hostname" "server sudo password"
 ______
 #### Using Makefile
 * Ensure that Go is installed on your machine and it`s version is equal or higther than 1.22.2
