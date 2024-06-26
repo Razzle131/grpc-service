@@ -5,8 +5,8 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"log"
-	"time"
 
 	"github.com/Razzle131/grpc-service/internal/consts"
 	desc "github.com/Razzle131/grpc-service/internal/generated"
@@ -29,15 +29,15 @@ var getHostnameCmd = &cobra.Command{
 
 		c := desc.NewCustomizerClient(conn)
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), waitTime)
 		defer cancel()
 
 		res, err := c.GetHostName(ctx, &desc.GetHostRequest{})
 		if err != nil {
-			log.Fatalf("failed to get note by id: %v", err)
+			log.Fatalf("failed to get hostname: %v", err)
 		}
 
-		log.Println(res.CurHostname)
+		fmt.Println(res.CurHostname)
 	},
 }
 

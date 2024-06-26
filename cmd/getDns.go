@@ -5,8 +5,8 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"log"
-	"time"
 
 	"github.com/Razzle131/grpc-service/internal/consts"
 	desc "github.com/Razzle131/grpc-service/internal/generated"
@@ -30,16 +30,16 @@ var getDnsCmd = &cobra.Command{
 
 		c := desc.NewCustomizerClient(conn)
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), waitTime)
 		defer cancel()
 
 		res, err := c.GetDNS(ctx, &desc.GetDnsRequest{})
 		if err != nil {
-			log.Fatalf("failed to get note by id: %v", err)
+			log.Fatalf("failed to get dns servers: %v", err)
 		}
 
 		for _, val := range res.DnsIps {
-			log.Println(val)
+			fmt.Println(val)
 		}
 	},
 }

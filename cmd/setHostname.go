@@ -5,8 +5,8 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 	"log"
-	"time"
 
 	"github.com/Razzle131/grpc-service/internal/consts"
 	desc "github.com/Razzle131/grpc-service/internal/generated"
@@ -29,15 +29,15 @@ var setHostnameCmd = &cobra.Command{
 
 		c := desc.NewCustomizerClient(conn)
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), waitTime)
 		defer cancel()
 
 		res, err := c.SetHostName(ctx, &desc.SetHostRequest{NewHostname: args[0], SudoPassword: args[1]})
 		if err != nil {
-			log.Fatalf("failed to get note by id: %v", err)
+			log.Fatalf("failed to set hostname: %v", err)
 		}
 
-		log.Println(res.CurHostname)
+		fmt.Println(res.CurHostname)
 	},
 }
 

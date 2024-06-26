@@ -6,7 +6,6 @@ package cmd
 import (
 	"context"
 	"log"
-	"time"
 
 	"github.com/Razzle131/grpc-service/internal/consts"
 	desc "github.com/Razzle131/grpc-service/internal/generated"
@@ -30,12 +29,12 @@ var remDnsCmd = &cobra.Command{
 
 		c := desc.NewCustomizerClient(conn)
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), waitTime)
 		defer cancel()
 
 		_, err = c.RemoveDNS(ctx, &desc.SetDnsRequest{DnsIp: args[0], SudoPassword: args[1]})
 		if err != nil {
-			log.Fatalf("failed to get note by id: %v", err)
+			log.Fatalf("failed to remove dns: %v", err)
 		}
 	},
 }
